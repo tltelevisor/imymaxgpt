@@ -23,12 +23,6 @@
         <div class="col span2">Последняя активность</div>
         <div class="col span10">{% if user.last_seen %}<p>{{ user.last_seen }}</p>{% endif %}</div>
 
-        <div class="col span2">Сменить пароль</div>
-        <div class="col span10"></div>
-
-        <div class="col span2">Управление услугами (API)</div>
-        <div class="col span10"></div>
-
         <div class="col span12">
             <form id="setapi" name="setapi" method="POST" action="/user/{{current_user}}">
             </form>
