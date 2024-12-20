@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% from 'navbar.html' import navbar %}
+{% from 'sidebar_0.html' import sidebar_0 %}
+
+{% block app_content %}
+{{sidebar_0(current_user, brand_gpt)}}
+<div id="mainContent" class="mainContent">
+    <div class="wrapper">
+        <div class="col span12">{{ navbar(current_user, status, brand_gpt) }}</div>
+
+        <!--        <div class="col span2"></div>-->
+        <div class="col span2">Личный кабинет</div>
+        <div class="col span10">{{ user.username }}</div>
+
+
+        <!--        <div class="col span2"></div>-->
+        <div class="col span2">Роль</div>
+        <div class="col span10">{% if user.rolepr_id %}<p>{{ rols[user.rolepr_id].rlname }}</p>{% else %}<p>обычный
+            пользователь</p>{% endif %}
+        </div>
+
+        <!--        <div class="col span2"></div>-->
+        <div class="col span2">Последняя активность</div>
+        <div class="col span10">{% if user.last_seen %}<p>{{ user.last_seen }}</p>{% endif %}</div>
+
+        <div class="col span2">Сменить пароль</div>
+        <div class="col span10"></div>
+
+        <div class="col span2">Управление услугами (API)</div>
+        <div class="col span10"></div>
+
+        <div class="col span12">
+            <form id="setapi" name="setapi" method="POST" action="/user/{{current_user}}">
+            </form>
+        </div>
+        <div class="col span2">Введите ключ Open AI API</div>
+        <div class="col span10"><a href="https://platform.openai.com/settings/organization/api-keys">https://platform.openai.com/settings/organization/api-keys</a>
+        </div>
+        <div class="col span12">
+            <div class="input-container">
+                <input type="text" form="setapi" id="apikey" name="apikey" placeholder="ключ Open AI API...">
+            </div>
+        </div>
+        <div class="col span2">
+            <input class="button-ha" id="submit" name="submit" type="submit" form="setapi" value="Ввести">
+        </div>
+        <div class="col span10"></div>
+
+
+        <div class="col span12"></div>
+        <div class="col span12"></div>
+    </div>
+</div>
+
+{% endblock %}

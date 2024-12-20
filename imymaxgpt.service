@@ -1,0 +1,15 @@
+#!/bin/bash
+#/etc/systemd/system/imymaxgpt.service
+[Unit]
+Description=iMyMax PrivateGPT service
+
+[Service]
+Type=simple
+User=max
+WorkingDirectory=/home/max/imymaxgpt/
+ExecStart=/home/max/imymaxgpt/1i.sh
+UMask=000
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
