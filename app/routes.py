@@ -117,8 +117,10 @@ def svfaq():
     print('id', id)
     faq = Faq.query.filter_by(id=id)[0]
     if app.config['LLM'] == 'OpenAI':
-        emb_q = 1
-        emb_a = 1
+        model = app.config['EMB_OPENAI_MODEL']
+        client_oai = OpenAI(api_key=gl_api_key)
+        emb_q = pickle.dumps(client_oai.embeddings.create(model=model, input=qu).data[0].embedding)
+        emb_a = pickle.dumps(client_oai.embeddings.create(model=model, input=an).data[0].embedding)
     elif app.config['LLM'] == 'PrivateGPT':
         client = PrivateGPTApi(base_url=app.config['URL_PGPT'], timeout=None)
         emb_q = pickle.dumps(client.embeddings.embeddings_generation(input=qu).data[0].embedding)
