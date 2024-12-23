@@ -1,37 +1,30 @@
 from app import app, db
 from app.models import Files, Post, Faq, Products, Answ_faq, User, catgr_files, Topic, Catgr, Batch, prd_cat_faq
 from sqlalchemy import select, and_, insert
-from app.files import tot_tokens, num_tokens
-from handler import prdct_id_nm, topics_f, context_filter_id_f, dic_cat_file_f
+
 from pgpt_python.client import PrivateGPTApi
 import pandas as pd
 from flask import jsonify
-import os, ast
+import pickle
 # from dotenv import load_dotenv, dotenv_values
 # load_dotenv()
-from app import gl_api_key_1
+from app import gl_api_key
 from app.oai import check , set1
 # from handler import status
+from openai import OpenAI
 
-# gl_api_key_1 = 1
-# with app.app_context():
+qu = "0"
+with app.app_context():
+    model = app.config['EMB_OPENAI_MODEL']
+    client_oai = OpenAI(api_key=gl_api_key)
+    emb_q = pickle.dumps(client_oai.embeddings.create(model=model, input=qu).data[0].embedding)
+    print(len(emb_q))
+    fq = Faq.query.filter(Faq.emb_a_oai == None).all()
+    for e in fq:
+        e.emb_a_oai = emb_q
+        e.emb_q_oai = emb_q
+    db.session.commit()
 
-    # check()
-
-
-def status():
-    check(gl_api_key_1)
-    return True
-# set1()
-# check()
-# check(gl_api_key_1)
-print(gl_api_key_1)
-
-if check(3):
-    set1(3)
-    # check(gl_api_key_1)
-    status()
-    print(gl_api_key_1)
 
 # c = 1 # глобальная переменная
 #

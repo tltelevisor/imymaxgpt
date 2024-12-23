@@ -1,5 +1,4 @@
 from flask import render_template, flash, redirect, url_for, request, jsonify
-# from app.files import split_strings_from_text, split_file, num_tokens
 from app.forms import LoginForm, RegistrationForm, PostForm, ProductsForm, NewFAQ
 from flask_login import current_user, login_user, logout_user, login_required
 from app.models import (User, Post, Products, Files, rolepr, Faq, Batch, Catgr, Answ_faq,
@@ -7,10 +6,10 @@ from app.models import (User, Post, Products, Files, rolepr, Faq, Batch, Catgr, 
 from datetime import datetime
 from sqlalchemy import insert, delete
 from os import remove
-from app import brand, brand_gpt, gl_api_key
+from app import brand, brand_gpt
 from openai import OpenAI
 import openai, tiktoken
-from app import app, db
+from app import app, db, gl_api_key
 from scipy import spatial
 from pgpt_python.client import PrivateGPTApi
 import pandas as pd
