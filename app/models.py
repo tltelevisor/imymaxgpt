@@ -153,7 +153,8 @@ class Files(db.Model):
 class Batch(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     text = db.Column(db.String(6600), index=True, unique=True) #Максимальное колиечество символов в батче
-    embed = db.Column(db.LargeBinary, nullable=False)  # тип данных BLOB, embeddings
+    embed = db.Column(db.LargeBinary)  # тип данных BLOB, embeddings
+    embed_oai = db.Column(db.LargeBinary)
     file_id = db.Column(db.Integer, db.ForeignKey('files.id'))
     #cat_id = db.Column(db.Integer, db.ForeignKey('catgr.id'))
 
