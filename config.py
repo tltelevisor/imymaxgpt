@@ -6,9 +6,11 @@ class Config:
     # BRAND, BRAND_GPT = 'iFlex', 'iFlexGPT'
     # LLM = 'PrivateGPT'
     LLM = 'OpenAI'
-    # OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-    OPENAI_API_KEY = 'wgrgrge'
+    OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+    # OPENAI_API_KEY = 'wgrgrge'
     OPENAI_MODEL = 'gpt-4o'#"gpt-3.5-turbo"
+    # OPENAI_MODEL = 'gpt-3.5-turbo"'
+    EMB_OPENAI_MODEL = 'text-embedding-ada-002'
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'mail_to_snow'
     URL_PGPT = "http://5.180.174.86:8001/"
     #sockettimeout = 600 см. __init__.py

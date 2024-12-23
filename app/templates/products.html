@@ -14,21 +14,25 @@
         <div class="col span12"><h4>Перечень продуктов</h4></div>
 
         <!--        <div class="col span2"></div>-->
-        <div class="col span4"><h4>Продукт</h4></div>
-        <div class="col span2"><h4>Менеджер</h4></div>
-        <div class="col span4"><h4>Описание продукта</h4></div>
-        <div class="col span2"><h4>Удалить</h4></div>
-<!--        <div class="col span1"></div>-->
+        <div class="col span2"><h4>Продукт</h4></div>
+        <div class="col span1"><h4>Менеджер</h4></div>
+        <div class="col span5"><h4>Описание продукта</h4></div>
+        <div class="col span1"><h4>Удалить</h4></div>
+        <div class="col span3"><h4></h4></div>
+        <!--        <div class="col span1"></div>-->
         {% for pr in products %}
         <!--        <div class="col span2"></div>-->
-        <div class="col span4">{{ pr.prdctname }}</div>
-        <div class="col span2">{{ pr.manager.username }}</div>
-        <div class="col span2"><a class="custom-nav-item" href="{{ url_for('product', prdctid=pr.id) }}">Изменить</a>
+        <div class="col span2">{{ pr.prdctname }}</div>
+        <div class="col span1">{{ pr.manager.username }}</div>
+        <div class="col span1"><a class="custom-nav-item" href="{{ url_for('product', prdctid=pr.id) }}">Изменить</a>
         </div>
-        <div class="col span2"><a class="custom-nav-item"
+        <div class="col span1"><a class="custom-nav-item"
                                   href="{{ url_for('prod_view', prdctid=pr.id) }}">Посмотреть</a></div>
-        <div class="col span2"><a class="custom-nav-item"
+        <div class="col span3"><a class="custom-nav-item"
+                                  href="{{ url_for('product_files', prdctid=pr.id) }}">Файлы посмотреть/Изменить</a></div>
+        <div class="col span1"><a class="custom-nav-item"
                                   href="{{ url_for('prod_view', prdctid=pr.id) }}">Удалить</a></div>
+        <div class="col span3"></div>
         <!--        <div class="col span1"></div>-->
         {% endfor %}
 

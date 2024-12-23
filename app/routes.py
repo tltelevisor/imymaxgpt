@@ -9,7 +9,7 @@ from sqlalchemy import insert, delete
 from os import remove
 from app import brand, brand_gpt, gl_api_key
 from openai import OpenAI
-import openai
+import openai, tiktoken
 from app import app, db
 from scipy import spatial
 from pgpt_python.client import PrivateGPTApi
@@ -17,6 +17,9 @@ import pandas as pd
 import pickle, ast
 from sqlalchemy import select, and_
 from numpy import round
+from mistral_common.protocol.instruct.request import ChatCompletionRequest
+from mistral_common.protocol.instruct.messages import UserMessage
+from mistral_common.tokens.tokenizers.mistral import MistralTokenizer
 
 def check_openai_api_key(api):
     try:
@@ -341,7 +344,7 @@ def handl_answ(prdctid=0):
         if question is not None:
             try:
                 if app.config['LLM'] == 'OpenAI':
-                    model = app.config['OPENAI_MODEL']
+                    model = app.config['EMB_OPENAI_MODEL']
                     client_oai = OpenAI(api_key=gl_api_key)
                     emb_q_oai = pickle.dumps(client_oai.embeddings.create(model=model,input=question).data[0].embedding)
                     emb_a_oai = pickle.dumps(client_oai.embeddings.create(model=model, input=answer).data[0].embedding)
@@ -819,7 +822,7 @@ def strings_ranked_by_relatedness(
             if app.config['LLM'] == 'OpenAI':
                 """Returns a list of strings and relatednesses, sorted from most related to least."""
                 client_oai = OpenAI(api_key=gl_api_key)
-                openai_model = app.config['OPENAI_MODEL']
+                openai_model = app.config['EMB_OPENAI_MODEL']
                 query_embedding_response = client_oai.embeddings.create(
                     model=openai_model,
                     input=query,
@@ -941,6 +944,7 @@ def topic_posts_f(user_id, topic):
 
 # -----------------------
 # Ранее был файл files.py
+tokenizer = MistralTokenizer.v1()
 max_tokens = app.config['MAX_TOKENS_IN_BATCH']
 delimiters = app.config['DELIMITERS']
 
@@ -954,7 +958,7 @@ def num_tokens(text: str):
             tokens = len(encoding.encode(text))
         elif app.config['LLM'] == 'PrivateGPT':
             completion_request = ChatCompletionRequest(messages=[UserMessage(content=text)])
-            tokens = tokenizer.encode_chat_completion(completion_request).tokens
+            tokens = len(tokenizer.encode_chat_completion(completion_request).tokens)
         else:
             app.logger.error(f'Нет обработчика для выбранной LLM config.py модели.')
             # количество слов
@@ -963,7 +967,7 @@ def num_tokens(text: str):
         app.logger.error(f'Выбранная в LLM config.py языковая модель недоступна.')
         # количество слов
         tokens = len(text.split())
-    return len(tokens)
+    return tokens
 
 # Подсчитывает количество токенов в сообщнеии
 def tot_tokens(messages: list):
@@ -981,7 +985,7 @@ def trunc_string(string, max_tokens):
         try:
             if app.config['LLM'] == 'OpenAI':
                 encoding = tiktoken.encoding_for_model(app.config['OPENAI_MODEL'])
-                tokens = encoding.encode(text)
+                tokens = encoding.encode(string)
                 truncated_tokens = tokens[:max_tokens]
                 truncated_string = encoding.decode(truncated_tokens)
             elif app.config['LLM'] == 'PrivateGPT':
@@ -1038,21 +1042,22 @@ def split_file(file_id: object, str_list: object, lst_cat) -> object:
         try:
             if app.config['LLM'] == 'OpenAI':
                 client_oai = OpenAI(api_key=gl_api_key)
-                openai_model = app.config['OPENAI_MODEL']
+                openai_model = app.config['EMB_OPENAI_MODEL']
                 query_embedding_response = client_oai.embeddings.create(
                     model=openai_model,
                     input=estr,
                 )
-                embed_oai = query_embedding_response.data[0].embedding
+                embed_oai = pickle.dumps(query_embedding_response.data[0].embedding)
                 embed = None
             elif app.config['LLM'] == 'PrivateGPT':
                 embed_oai = None
+                client = PrivateGPTApi(base_url=app.config['URL_PGPT'], timeout=None)
                 embed = pickle.dumps(client.embeddings.embeddings_generation(input=estr).data[0].embedding)
             else:
                 app.logger.error(f'Нет обработчика для выбранной LLM config.py модели.')
                 embed, embed_oai = None, None
         except Exception as err:
-            app.logger.error(f'Выбранная в LLM config.py языковая модель недоступна (VPN?).')
+            app.logger.error(f'Выбранная в LLM config.py языковая модель недоступна (VPN?). {err}')
             embed, embed_oai = None, None
         batch = Batch(text=estr, embed=embed, embed_oai=embed_oai, file_id=file_id)
         db.session.add(batch)
