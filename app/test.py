@@ -13,17 +13,21 @@ from app.oai import check , set1
 # from handler import status
 from openai import OpenAI
 
-qu = "0"
-with app.app_context():
-    model = app.config['EMB_OPENAI_MODEL']
-    client_oai = OpenAI(api_key=gl_api_key)
-    emb_q = pickle.dumps(client_oai.embeddings.create(model=model, input=qu).data[0].embedding)
-    print(len(emb_q))
-    fq = Faq.query.filter(Faq.emb_a_oai == None).all()
-    for e in fq:
-        e.emb_a_oai = emb_q
-        e.emb_q_oai = emb_q
-    db.session.commit()
+def run():
+    qu = "0"
+    with app.app_context():
+        model = app.config['EMB_OPENAI_MODEL']
+        client_oai = OpenAI(api_key=gl_api_key)
+        emb_q = pickle.dumps(client_oai.embeddings.create(model=model, input=qu).data[0].embedding)
+        print(len(emb_q))
+        fq = Faq.query.filter(Faq.emb_a_oai == None).all()
+        for e in fq:
+            e.emb_a_oai = emb_q
+            e.emb_q_oai = emb_q
+        db.session.commit()
+
+if __name__ == '__main__':
+    run()
 
 
 # c = 1 # глобальная переменная
