@@ -746,15 +746,16 @@ def response_json(user_id, mess):
         cf_id, cntxt_str, prd_lst = context_filter_id_f(mess['context'])
         post_fu.user_context = str(cntxt_str)
         context_filter = context_filter_f(cf_id)
-        try:
-            if app.config['LLM'] == 'OpenAI':
-                result = result_context_oai(messages, cf_id)
-            elif app.config['LLM'] == 'PrivateGPT':
-                result = result_context(messages, context_filter)
-            else:
-                result = f'Нет обработчика для выбранной LLM config.py модели.'
-        except Exception as err:
-            result = f'Выбранная в LLM config.py языковая модель недоступна (VPN?).'
+        # try:
+        if app.config['LLM'] == 'OpenAI':
+            result = result_context_oai(messages, cf_id)
+        elif app.config['LLM'] == 'PrivateGPT':
+            result = result_context(messages, context_filter)
+        else:
+            result = f'Нет обработчика для выбранной LLM config.py модели.'
+        # except Exception as err:
+        #     app.logger.error(f'Выбранная в LLM...757, Error: {err}.')
+        #     result = f'Выбранная в LLM config.py языковая модель недоступна (VPN?).'
         cf_id = str(cf_id)
 
     else:
@@ -1113,7 +1114,7 @@ def split_file(file_id: object, str_list: object, lst_cat) -> object:
                 app.logger.error(f'Нет обработчика для выбранной LLM config.py модели.')
                 embed, embed_oai = None, None
         except Exception as err:
-            app.logger.error(f'Выбранная в LLM config.py языковая модель недоступна (VPN?). {err}')
+            app.logger.error(f'Выбранная в LLM...1117, Error: {err}.')
             embed, embed_oai = None, None
         batch = Batch(text=estr, embed=embed, embed_oai=embed_oai, file_id=file_id)
         db.session.add(batch)
