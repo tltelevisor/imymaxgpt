@@ -17,14 +17,14 @@ class rolepr(db.Model):
     def __repr__(self):
         return '<rolepr {}>'.format(self.rlname)
 
-class Context(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    filehash = db.Column(db.Integer, db.ForeignKey('files.filehash'))
-    isincntx = db.Column(db.Boolean, default=False, nullable=False)
-
-    def __repr__(self):
-        return '<Context {}>'.format(self.isincntx)
+# class Context(db.Model):
+#     id = db.Column(db.Integer, primary_key=True)
+#     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+#     filehash = db.Column(db.Integer, db.ForeignKey('files.filehash'))
+#     isincntx = db.Column(db.Boolean, default=False, nullable=False)
+#
+#     def __repr__(self):
+#         return '<Context {}>'.format(self.isincntx)
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -36,7 +36,7 @@ class User(UserMixin, db.Model):
     rolepr_id = db.Column(db.Integer, db.ForeignKey('rolepr.id'), default=3)
     products = db.relationship('Products', backref='manager', lazy='dynamic')
     files = db.relationship('Files', backref='wholoadf', lazy='dynamic')
-    context = db.relationship('Context', backref='whosecntx', lazy='dynamic')
+    # context = db.relationship('Context', backref='whosecntx', lazy='dynamic')
     cntxstr = db.Column(db.String(440),default='{}') #100*20*22 (100 продуктов, 20 файлов, 20+2 знаков)
     faq = db.relationship('Faq', backref='author', lazy='dynamic')
     topic = db.relationship('Topic', backref='author_topic', lazy='dynamic')
@@ -60,8 +60,11 @@ class Faq(db.Model):
     emb_a = db.Column(db.LargeBinary)  # тип данных BLOB
     emb_q_oai = db.Column(db.LargeBinary)  # тип данных BLOB
     emb_a_oai = db.Column(db.LargeBinary)  # тип данных BLOB
+    file_id = db.Column(db.Integer, db.ForeignKey('files.id'))
+    isgptauto = db.Column(db.Boolean, default=False)
     ispublic = db.Column(db.Boolean, default=False, nullable=False)
     answ_faq = db.relationship('Answ_faq', backref='whatfaq', lazy='dynamic')
+    isverified = db.Column(db.Boolean, default=False, nullable=False)
 
     def __repr__(self):
         return '<Faq {}>'.format(self.id)
@@ -110,6 +113,7 @@ class Products(db.Model):
     mngr_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     filespr = db.relationship('Files', backref='product_fl', lazy='dynamic')
     faq = db.relationship('Faq', backref='product', lazy='dynamic')
+    isact = db.Column(db.Boolean, default=True, nullable=False)
 
     def __repr__(self):
         return '<Product {}>'.format(self.prdctname)
@@ -139,8 +143,9 @@ class Files(db.Model):
     prdct_id = db.Column(db.Integer, db.ForeignKey('products.id'))
     tokens = db.Column(db.Integer)
     bathes = db.Column(db.Integer, default=0)
-    context = db.relationship('Context', backref='cntxfile', lazy='dynamic')
+    # context = db.relationship('Context', backref='cntxfile', lazy='dynamic')
     batch = db.relationship('Batch', backref='file', lazy='dynamic')
+    isact = db.Column(db.Boolean, default=True, nullable=False)
     #Удалить этот столбец
     #cat_id = db.Column(db.Integer, db.ForeignKey('catgr.id'), index=True)
     #file_cat = db.relationship('Batch', backref='cat_file_', lazy='dynamic')

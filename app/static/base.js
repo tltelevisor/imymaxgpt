@@ -74,7 +74,7 @@ function topicMessage(data) {
 async function sendMessage_1() {
 toggleLoader()
 await timeout(3000);
-addMessage('Привет! Как я могу помочь?', 'assistant');
+alert('Привет! Как я могу помочь?');
 toggleLoader()
 }
 
@@ -336,5 +336,6 @@ allFileChk[0].parentElement.parentElement.style.display = "flex"}
 
 }
 }
+
 
 

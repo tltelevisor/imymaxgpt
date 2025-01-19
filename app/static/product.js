@@ -1,9 +1,11 @@
+
 const prd_id = document.getElementById('prdctid').getAttribute('name')
 
 let faq_id
   const e_q = document.getElementById('question');
   const e_a = document.getElementById('answer');
   const cntCat = document.getElementById('cat');
+
 
 
 //перенос текста из описания категорий для редактирования
@@ -95,7 +97,8 @@ const btm = document.getElementById('btmfile')
     }
 
 //Добавление файла
-document.getElementById('uploadForm').addEventListener('submit', function (e) {
+document.getElementById('uploadForm').addEventListener('submit', async function (e) {
+toggleLoader();
     e.preventDefault();
     const fileInput = document.getElementById('fileInput');
     const file = fileInput.files[0];
@@ -109,7 +112,7 @@ document.getElementById('uploadForm').addEventListener('submit', function (e) {
 //    for (var key of formData.keys()) {
 //   console.log(key, formData.get(key))};
 
-    fetch('/upload', {
+    await fetch('/upload', {
         method: 'POST',
         body: formData,
     })
@@ -120,6 +123,7 @@ document.getElementById('uploadForm').addEventListener('submit', function (e) {
         console.log('----redirect', '/product_files/'+ prd_id);
         window.location.href ='/product_files/'+ prd_id }
         //console.log(data['file']);
+    toggleLoader();
     })
     .catch(error => {
         console.log('---перед ошибкой');
@@ -130,9 +134,10 @@ document.getElementById('uploadForm').addEventListener('submit', function (e) {
 
 //Удаление файла
 
-function delFile(file_id) {
+async function delFile(file_id) {
+toggleLoader();
 const url_t = '/delete'
-    fetch(url_t, {
+    await fetch(url_t, {
         method: 'POST',
         body: JSON.stringify(file_id),
         headers: {
@@ -154,4 +159,67 @@ const url_t = '/delete'
 //        document.getElementById('response').innerText = data['message'];
         console.error('Error:', error);
     });
+toggleLoader();
 }
+
+
+async function faqFile(file_id) {
+toggleLoader();
+//await timeout(3000);
+//alert('Привет! Как я могу помочь?');
+
+const url_t = '/faqfile'
+    await fetch(url_t, {
+        method: 'POST',
+        body: JSON.stringify(file_id),
+        headers: {
+        'Content-type': 'application/json; charset=UTF-8',
+        },
+    })
+    .then(response => response.json())
+        .then(data => {
+        //document.getElementById('response').innerText = data['message'];
+        if (data['error'] === '0') {
+        console.log('----redirect', '/product_files/'+ prd_id);
+        window.location.href ='/product_files/'+ prd_id}
+        if (data['error'] === '1') {
+        document.getElementById('response').innerText = data['message'];
+        console.error('Error:', error)};
+    })
+    .catch(error => {
+        console.log('---перед ошибкой');
+//        document.getElementById('response').innerText = data['message'];
+        console.error('Error:', error);
+    });
+
+toggleLoader();
+}
+
+async function delProduct(prod_id) {
+toggleLoader();
+const url_t = '/del_product'
+    await fetch(url_t, {
+        method: 'POST',
+        body: JSON.stringify(prod_id),
+        headers: {
+        'Content-type': 'application/json; charset=UTF-8',
+        },
+    })
+    .then(response => response.json())
+        .then(data => {
+        //document.getElementById('response').innerText = data['message'];
+        if (data['error'] === '0') {
+        console.log('----redirect', '/product_files/'+ prd_id);
+        window.location.href ='/product_files/'+ prd_id}
+        if (data['error'] === '1') {
+        document.getElementById('response').innerText = data['message'];
+        console.error('Error:', error)};
+    })
+    .catch(error => {
+        console.log('---перед ошибкой');
+//        document.getElementById('response').innerText = data['message'];
+        console.error('Error:', error);
+    });
+toggleLoader();
+}
+

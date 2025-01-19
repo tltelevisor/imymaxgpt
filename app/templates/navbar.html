@@ -1,7 +1,7 @@
 {%- macro navbar (current_user, status, brand_gpt) -%}
 <nav class="custom-navbar">
     <a class="custom-navbar-brand" href="{{ url_for('index') }}"><img
-            src="{{ url_for('static',filename='iFlex_log_20.svg') }}"
+            src="{{ url_for('static',filename='imymaxlogo.svg') }}"
             style="margin-right: 10px;">{{brand_gpt}}</a>
     <!--    <div>{%if status[0] != 0 %}<img src="{{ url_for('static',filename='cross.png') }}" style="margin-left: 5px;">{% endif %}</div>-->
 
@@ -22,8 +22,9 @@
             {% if current_user.is_anonymous %}
             <a class="custom-nav-item" aria-current="page" href="{{ url_for('login') }}">Вход в {{brand_gpt}}</a>
             {% else %}
-            <a class="custom-nav-item" href="{{ url_for('handl_answ') }}">=> FAQ</a>
             <a class="custom-nav-item" href="{{ url_for('products') }}">Продукты</a>
+            <a class="custom-nav-item" href="{{ url_for('faq') }}">FAQ</a>
+            <a class="custom-nav-item" href="{{ url_for('handl_answ') }}">=> FAQ</a>
             <a class="custom-nav-item" href="{{ url_for('users') }}">Пользователи</a>
             <a class="custom-nav-item" href="{{ url_for('user', username=current_user.username) }}">Л/к
                 {{current_user.username}}</a>

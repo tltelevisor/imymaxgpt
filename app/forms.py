@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import (StringField, PasswordField, BooleanField, SubmitField,FormField,
-                     SelectField, TextAreaField,FieldList)
+                     SelectField, TextAreaField,FieldList, HiddenField)
 from wtforms.validators import Length
 from flask_wtf.file import FileField
 from app import app
@@ -10,7 +10,7 @@ from app.models import User, Products
 class NewFAQ(FlaskForm):
     try:
         with app.app_context():
-            products = Products.query.all()# исправить запрос учет прав пользователя
+            products = Products.query.filter_by(isact=1).all()# исправить запрос учет прав пользователя
         products_list = [(ep.id, ep.prdctname) for ep in products]
     except:
         products_list = [(0, 'БД не доступна'), (1, 'БД не доступна')]
@@ -20,8 +20,25 @@ class NewFAQ(FlaskForm):
     product = SelectField('Выбрать продукт', coerce = int, choices = products_list)
     question = TextAreaField(label='',default=df_question)
     answer = TextAreaField(label='',default=df_answer) #label='Ответ',
-    ispublic = BooleanField('Публичный доступ')
+    ispublic = BooleanField('Публичный доступ', default=True)
     submit_ad = SubmitField('Отправить в FAQ')
+
+class EditFAQ(FlaskForm):
+    try:
+        with app.app_context():
+            products = Products.query.filter_by(isact=1).all()# исправить запрос учет прав пользователя
+        products_list = [(ep.id, ep.prdctname) for ep in products]
+    except:
+        products_list = [(0, 'БД не доступна'), (1, 'БД не доступна')]
+
+    df_question = 'Введите вопрос...'
+    df_answer = 'Введите ответ...'
+    product = SelectField('Выбрать продукт', coerce = int, choices = products_list)
+    idfaq = HiddenField()
+    question = TextAreaField(label='',default=df_question)
+    answer = TextAreaField(label='',default=df_answer) #label='Ответ',
+    ispublic = BooleanField('Публичный доступ', default=True)
+    submit_ad = SubmitField('Сохранить в FAQ')
 
 
 class PostForm(FlaskForm):
